@@ -1,0 +1,20 @@
+tree ASCII values in decimal:
+116 114 101 101
+
+Cyphertext ASCII values in decimal:
+121 226 174 146
+
+XOR them to get the key:
+ 13 144 203 247
+
+foot ASCII values in decimal:
+102 111 111 116
+
+XOR foot with key:
+107 255 164 131
+
+Convert to hex:
+6B FF A4 83
+
+Replace in cyphertext:
+0E DF 6B FF A4 83 62 5D 72 DC 17 3D 83 5D 45 88 69 D1 64 A2
