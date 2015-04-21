@@ -1,0 +1,7 @@
+Da eine Funktion nicht bijektiv ist, lässt sich ein mit ihr verschlüsseltes Wort nicht eindeutig wieder entschlüsseln.
+
+Beispiel-Schlüssel:
+f(1) = 5
+f(2) = 5
+
+Aus dem Text '5' kann nun nicht bestimmt werden, ob der Ursprüngliche Input '1' oder '2' war.
