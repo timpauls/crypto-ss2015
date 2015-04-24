@@ -1,0 +1,3 @@
+Als a kommen 12 Werte in Frage.
+Als b kommen 26 Werte in Frage.
+Dementsprechend kann man 12 * 26 = 312 verschiedene eins-zu-eins affine Caesar-Chiffren bilden.

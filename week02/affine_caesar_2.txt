@@ -1,0 +1,14 @@
+Seltenster Buchstabe in Englisch ist Z.
+2. Seltenster Buchstabe ist Q.
+
+Also findet ein Mapping Z -> B und Q -> A statt.
+
+Affine Caesar-Chiffre Formel: (a*p+b) mod 26
+
+Einsetzen:
+1) (a*26+b) mod 26 = 2
+2) (a*17+b) mod 26 = 1
+
+// TODO
+Umstellen:
+aus 1) 
