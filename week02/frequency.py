@@ -79,10 +79,17 @@ def print_incidence(incidence):
 # uppercase character.
 
 def monoalphabetic_substitution(text, subs):
-    pass
-##################
-# YOUR CODE HERE #
-##################
+    plainText = list(text)
+    for i in range(len(plainText)):
+        letter = plainText[i]
+        if is_alphabetic_char(letter):
+            plainLetter = subs[char_to_num(letter)]
+            if is_alphabetic_char(plainLetter):
+                plainText[i] = plainLetter
+            else:
+                plainText[i] = letter.upper()
+    return "".join(plainText)
+
 
 # c) Use your functions from (a) and (b) to decrypt the following
 # cipher text. The plain text is written in English. All characters
@@ -178,4 +185,5 @@ plain_text = "This is the plain text."
 #test()
 
 
-print_incidence(compute_incidence(cipher_text))
+#print_incidence(compute_incidence(cipher_text))
+#print monoalphabetic_substitution("hQXXo du dQ", "________________a______l__")
