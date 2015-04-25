@@ -146,44 +146,79 @@ xc xgl ucoca tgnl gt sqwx ecvmac, gul n sqtj glsnj jxgj xnt kmalt ygoc sc zccu f
 \"lm umuc tqyyctj jxcstcpoct? rmq zumk sr scjxmlt. gffpr jxcs!\""
 
 
+# Get frequency table
+# print_incidence(compute_incidence(cipher_text))
 
-plain_text = "This is the plain text."
-# # Note: The steps that lead to your solution should be identifiable,
-# # e.g.:
-# 
-# # Get frequency table
-# print(compute_incidence(cipher_text))
-# 
-# # O.K., from the frequency table of the cipher_text I conclude that
-# # cipher_text 'y' = plaintext 'w'
-# subs1 = '________________________w_'
-# 
-# # Let's see what we get...
-# print(monoalphabetic_substitution(cipher_text, subs1))
-# 
-# # O.K., from the partially decrypted text I guess that
-# # cipher_text 'k' = plaintext 'c'
-# 
-# subs2 = '__________c_____________w_'
-# print(monoalphabetic_substitution(cipher_text, subs2))
-# 
-# # and so on ...
+# c: 8.031257%
+# j: 7.011070%
+# g: 6.642066%
+# n: 6.251357%
+# m: 6.207944%
+# t: 5.448231%
+# u: 5.100933%
+# x: 4.905578%
+# a: 3.907098%
+# l: 2.756675%
+# p: 2.734969%
+# w: 2.431083%
+# q: 2.365965%
+# s: 2.214022%
+# k: 1.888431%
+# r: 1.649664%
+# v: 1.649664%
+# y: 1.410896%
+# f: 1.172129%
+# e: 0.998481%
+# o: 0.911656%
+# z: 0.868244%
+# d: 0.173649%
+# h: 0.065118%
+# i: 0.065118%
+# b: 0.000000%
 
-##################
-# YOUR CODE HERE #
-##################
+# The most used letter is in english is e.
+# So: cipher 'c' = plain 'e'
+# subs = "__e_______________________"
+# print monoalphabetic_substitution(cipher_text, subs)
 
-#plain_text = monoalphabetic_substitution(cipher_text, subs)
-#
-## Show that you got the right plain text by calling the following
-## function:
-#
-#def test():
-#    assert(hashlib.sha256(plain_text).hexdigest() ==
-#           '1dc539240874ef45badaa09adbc479136d44485a6bca8d9722a590ad9b9c5869')
-#
-#test()
+# From the partially decrypted text I notice the word 'JXe' appearing multiple times.
+# I assume this is the word 'the' (which also matches the frequency table).
+# cipher 'j' = plain 't'; cipher 'x' = plain 'h'
+# subs = "__e______t_____________h__"
+# print monoalphabetic_substitution(cipher_text, subs)
 
+# From frequency table:
+# cipher 'g' = plain 'a'
+# subs = "__e___a__t_____________h__"
+# print monoalphabetic_substitution(cipher_text, subs)
 
-#print_incidence(compute_incidence(cipher_text))
-#print monoalphabetic_substitution("hQXXo du dQ", "________________a______l__")
+# I assume 'aUL' is 'and'
+# cipher 'u' = plain 'n'; cipher 'l' = plain 'd'
+# subs = "__e___a__t_d________n__h__"
+# print monoalphabetic_substitution(cipher_text, subs)
+
+# 'tM' is probably 'to', 'aT' = 'as', 'N' = 'i'
+# cipher 'm' = plain 'o', cipher 't' = plain 's', cipher 'n' = plain 'i
+# subs = "__e___a__t_doi_____sn__h__"
+# print monoalphabetic_substitution(cipher_text, subs)
+
+# "KePP, Katson, Khat do RoQ SaZe oV it?" = "well, watson, what do you make of it?"
+# k->w, p->l, r->y, q->u, s->m, z->k, v->f
+# subs = "__e___a__twdoi_luymsnf_h_k"
+# print monoalphabetic_substitution(cipher_text, subs)
+
+# From the text: a->r, w->c, o->v, y->g, f->p, h->q, e->b, d->x
+# Remaining two are j and z. Probably b->z, i->j
+subs = "rzexbpaqjtwdoivluymsnfchgk"
+# print monoalphabetic_substitution(cipher_text, subs)
+
+plain_text = monoalphabetic_substitution(cipher_text, subs)
+
+# Show that you got the right plain text by calling the following
+# function:
+
+def test():
+    assert(hashlib.sha256(plain_text).hexdigest() ==
+           '1dc539240874ef45badaa09adbc479136d44485a6bca8d9722a590ad9b9c5869')
+
+test()
