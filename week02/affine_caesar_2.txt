@@ -6,9 +6,24 @@ Also findet ein Mapping Z -> B und Q -> A statt.
 Affine Caesar-Chiffre Formel: (a*p+b) mod 26
 
 Einsetzen:
-1) (a*26+b) mod 26 = 2
-2) (a*17+b) mod 26 = 1
+I) (a*25+b) mod 26 = 1
+II) (a*16+b) mod 26 = 0
 
-// TODO
 Umstellen:
-aus 1) 
+aus I)
+	a*25+b = 1, oder 27, oder 53, ...
+	b = 1-25a, oder 27-25a, oder 53-25a, ...
+
+aus II)
+	a*16+b = 0, oder 26, oder 52, ....
+
+Einsetzen I) in II):
+	16a+1-25a = 0	-> -9a+1 = 0	-> a = 1/9	-> keine gültige Lösung
+	16a+27-25a = 0	-> -9a+27 = 0	-> a = 3	-> mögliche Lösung
+
+	a = 3 einsetzen in I):
+	b = 1+(26n)-75 mit n in [0..25]
+	b = 4 mit n = 3
+
+a = 3
+b = 4
