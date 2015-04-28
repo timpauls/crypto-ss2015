@@ -52,11 +52,18 @@ def num_to_char(x):
 # (ignoring all non alphabet characters)  and return a list of pairs
 # (letter, incidence percentage) sorted by incidence percentage.
 
+def count_alphabetic_characters(text):
+    count = 0
+    for letter in text:
+        if is_alphabetic_char(letter):
+            count += 1
+    return count
+
 
 def compute_incidence(ciphertext):
     pairList = []
     for letter in en_alphabet:
-        percentage = ciphertext.count(letter)*100.0/len(ciphertext)
+        percentage = ciphertext.count(letter)*100.0/count_alphabetic_characters(ciphertext)
         pairList.append((letter, percentage))
     pairList.sort(key = lambda pair: pair[1], reverse=True)
     return pairList
@@ -149,31 +156,31 @@ xc xgl ucoca tgnl gt sqwx ecvmac, gul n sqtj glsnj jxgj xnt kmalt ygoc sc zccu f
 # Get frequency table
 # print_incidence(compute_incidence(cipher_text))
 
-# c: 8.031257%
-# j: 7.011070%
-# g: 6.642066%
-# n: 6.251357%
-# m: 6.207944%
-# t: 5.448231%
-# u: 5.100933%
-# x: 4.905578%
-# a: 3.907098%
-# l: 2.756675%
-# p: 2.734969%
-# w: 2.431083%
-# q: 2.365965%
-# s: 2.214022%
-# k: 1.888431%
-# r: 1.649664%
-# v: 1.649664%
-# y: 1.410896%
-# f: 1.172129%
-# e: 0.998481%
-# o: 0.911656%
-# z: 0.868244%
-# d: 0.173649%
-# h: 0.065118%
-# i: 0.065118%
+# c: 10.449026%
+# j: 9.121717%
+# g: 8.641627%
+# n: 8.133296%
+# m: 8.076814%
+# t: 7.088393%
+# u: 6.636543%
+# x: 6.382378%
+# a: 5.083310%
+# l: 3.586557%
+# p: 3.558317%
+# w: 3.162948%
+# q: 3.078226%
+# s: 2.880542%
+# k: 2.456933%
+# r: 2.146286%
+# v: 2.146286%
+# y: 1.835640%
+# f: 1.524993%
+# e: 1.299068%
+# o: 1.186106%
+# z: 1.129624%
+# d: 0.225925%
+# h: 0.084722%
+# i: 0.084722%
 # b: 0.000000%
 
 # The most used letter is in english is e.
