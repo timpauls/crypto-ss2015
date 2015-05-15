@@ -1,0 +1,16 @@
+Round 0:
+	half1		half2
+
+Round 1:
+	half2		half1 XOR 0xFFFF
+
+Round 2:
+	half1 XOR 0xFFFF		half2 XOR 0xFFFF
+
+Round 3:
+	half2 XOR 0xFFFF		half1
+
+Round 4:
+	half1		half2
+
+Because (A XOR B) XOR B = A, after four rounds (and multiples of 4) we once again get the original input.
