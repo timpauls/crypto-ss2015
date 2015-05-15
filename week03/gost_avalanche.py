@@ -41,19 +41,60 @@ sboxes = [ [4, 10, 9, 2, 13, 8, 0, 14, 6, 11, 1, 12, 7, 15, 5, 3],
 
 
 def gostEncrypt(plaintext, key, rounds=32):
-##################
-# YOUR CODE HERE #
-##################
+    left = (plaintext & (0xFFFFFFFF << 32)) >> 32
+    right = plaintext & 0xFFFFFFFF
+
+    ciphertext = performGost(left, right, key, 1, rounds)
+
     return(ciphertext)
 
 # You will probably need a number of utility functions to implement
 # gostEncrypt.
 
-def getGostRoundKey(key, round):
-    if round <= 8:
-        return (key & (0xFFFFFFFF << (round-1)*32)) >> (round-1) * 32
+def getGostRoundKey(key, round, maxRounds):
+    if round <= maxRounds - 8:
+        return (key & (0xFFFFFFFF << ((round-1)%8)*32)) >> (((round-1)%8)*32)
     else:
-        return getGostRoundKey(key, 17-round)
+        return getGostRoundKey(key, maxRounds-round + 1, maxRounds)
+
+def get4bitChunk(input, chunkNo):
+    return (input & (0xF << (chunkNo)*4)) >> (chunkNo) * 4
+
+def applySBoxes(input):
+    result = 0x0
+    for i in range(8):
+        chunk = get4bitChunk(input, i)
+        sboxed = sboxes[i][chunk]
+        result += sboxed << i*4
+    return result
+
+def rotateBy11Bits(input):
+    firstElevenBits = input & 0xFFE00000
+    last21Bits = input & 0x1FFFFF
+    return (last21Bits << 11) + (firstElevenBits >> 21)
+
+def gostRoundFunction(input, key, round, maxRounds):
+    subkey = getGostRoundKey(key, round, maxRounds)
+    print "Round Key: " + hex(subkey)
+    output = (input + subkey) % 0x100000000
+    print "R + Round Key: " + hex(output)
+    output = applySBoxes(output)
+    print "s-Box Application: " + hex(output)
+    output = rotateBy11Bits(output)
+    print "Shift Left: " + hex(output)
+    return output
+
+def performGost(left, right, key, round, maxRounds):
+    print "Round: %d"%round
+    print "Left: %s"%hex(left)
+    print "Right: %s"%hex(right)
+
+    newLeft = right
+    newRight = left ^ gostRoundFunction(right, key, round, maxRounds)
+    if round < maxRounds:
+        return performGost(newLeft, newRight, key, round+1, maxRounds)
+    else:
+        return (newLeft << 32) + newRight
 
 def bitDifference(a, b):
     """Return number of bits different between a and b."""
@@ -120,5 +161,5 @@ def keyAvalance():
         print('Round: %02d Delta: %d' % (rounds+1, bitDifference(c0, c1)))
 
 testEncrypt()
-plaintextAvalance()
-keyAvalance()
+#plaintextAvalance()
+#keyAvalance()
