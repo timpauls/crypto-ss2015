@@ -49,9 +49,11 @@ def gostEncrypt(plaintext, key, rounds=32):
 # You will probably need a number of utility functions to implement
 # gostEncrypt.
 
-##################
-# YOUR CODE HERE #
-##################
+def getGostRoundKey(key, round):
+    if round <= 8:
+        return (key & (0xFFFFFFFF << (round-1)*32)) >> (round-1) * 32
+    else:
+        return getGostRoundKey(key, 17-round)
 
 def bitDifference(a, b):
     """Return number of bits different between a and b."""
@@ -120,4 +122,3 @@ def keyAvalance():
 testEncrypt()
 plaintextAvalance()
 keyAvalance()
-
