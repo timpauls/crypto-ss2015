@@ -41,6 +41,9 @@ sboxes = [ [4, 10, 9, 2, 13, 8, 0, 14, 6, 11, 1, 12, 7, 15, 5, 3],
 
 
 def gostEncrypt(plaintext, key, rounds=32):
+    if rounds == 0:
+        return plaintext
+
     left = (plaintext & (0xFFFFFFFF << 32)) >> 32
     right = plaintext & 0xFFFFFFFF
 
@@ -52,7 +55,7 @@ def gostEncrypt(plaintext, key, rounds=32):
 # gostEncrypt.
 
 def getGostRoundKey(key, round, maxRounds):
-    if round <= maxRounds - 8:
+    if round <= max(maxRounds - 8, 1):
         return (key & (0xFFFFFFFF << ((round-1)%8)*32)) >> (((round-1)%8)*32)
     else:
         return getGostRoundKey(key, maxRounds-round + 1, maxRounds)
@@ -75,19 +78,19 @@ def rotateBy11Bits(input):
 
 def gostRoundFunction(input, key, round, maxRounds):
     subkey = getGostRoundKey(key, round, maxRounds)
-    print "Round Key: " + hex(subkey)
+    # print "Round Key: " + hex(subkey)
     output = (input + subkey) % 0x100000000
-    print "R + Round Key: " + hex(output)
+    # print "R + Round Key: " + hex(output)
     output = applySBoxes(output)
-    print "s-Box Application: " + hex(output)
+    # print "s-Box Application: " + hex(output)
     output = rotateBy11Bits(output)
-    print "Shift Left: " + hex(output)
+    # print "Shift Left: " + hex(output)
     return output
 
 def performGost(left, right, key, round, maxRounds):
-    print "Round: %d"%round
-    print "Left: %s"%hex(left)
-    print "Right: %s"%hex(right)
+    # print "Round: %d"%round
+    # print "Left: %s"%hex(left)
+    # print "Right: %s"%hex(right)
 
     newLeft = right
     newRight = left ^ gostRoundFunction(right, key, round, maxRounds)
@@ -97,11 +100,7 @@ def performGost(left, right, key, round, maxRounds):
         return (newLeft << 32) + newRight
 
 def bitDifference(a, b):
-    """Return number of bits different between a and b."""
-    pass
-##################
-# YOUR CODE HERE #
-##################
+    return bin(a^b).count("1")
 
 def testEncrypt():
     assert(gostEncrypt(plaintext=plaintext0, key=key0) ==
@@ -161,5 +160,5 @@ def keyAvalance():
         print('Round: %02d Delta: %d' % (rounds+1, bitDifference(c0, c1)))
 
 testEncrypt()
-#plaintextAvalance()
+plaintextAvalance()
 #keyAvalance()
