@@ -1,0 +1,23 @@
+Round 0:
+	half1	half2
+
+Round 1:
+	half2	half1 XOR half2^{-1}
+
+Round 2:
+	half1 XOR half2^{-1}	half2 XOR (half1 XOR half2^{-1})^{-1} = half2 XOR (half1 XOR half2) = half1
+
+Round 3:
+	half1	(half1 XOR half2^{-1}) XOR half1^{-1} = 1 XOR half2^{-1} = half2
+
+Round 4: same as round 1
+	half2	half1 XOR half2^{-1}
+
+Round 5: same as round 2
+Round 6: same as round 3
+Round 7: same as round 4 = same as round 1
+...
+Round 16: same as round 1	
+
+After 16 rounds the output consists of the second half of the original input 
+followed by the first half XOR the bitwise complement of the second half.
