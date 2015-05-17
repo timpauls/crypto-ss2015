@@ -39,7 +39,6 @@ sboxes = [ [4, 10, 9, 2, 13, 8, 0, 14, 6, 11, 1, 12, 7, 15, 5, 3],
 # not encrypt to the same ciphertext as in the example, please carry
 # on and measure the avalance effects for your implementation.
 
-
 def gostEncrypt(plaintext, key, rounds=32):
     if rounds == 0:
         return plaintext
@@ -54,8 +53,31 @@ def gostEncrypt(plaintext, key, rounds=32):
 # You will probably need a number of utility functions to implement
 # gostEncrypt.
 
+def performGost(left, right, key, round, maxRounds):
+    # print "Round: %d"%round
+    # print "Left: %s"%hex(left)
+    # print "Right: %s"%hex(right)
+
+    newLeft = right
+    newRight = left ^ gostRoundFunction(right, key, round, maxRounds)
+    if round < maxRounds:
+        return performGost(newLeft, newRight, key, round+1, maxRounds)
+    else:
+        return (newLeft << 32) + newRight
+
+def gostRoundFunction(input, key, round, maxRounds):
+    subkey = getGostRoundKey(key, round, maxRounds)
+    # print "Round Key: " + hex(subkey)
+    output = (input + subkey) % 0x100000000
+    # print "R + Round Key: " + hex(output)
+    output = applySBoxes(output)
+    # print "s-Box Application: " + hex(output)
+    output = rotateBy11Bits(output)
+    # print "Shift Left: " + hex(output)
+    return output
+
 def getGostRoundKey(key, round, maxRounds):
-    if round <= max(maxRounds - 8, 1):
+    if round <= max(maxRounds - 8, 8):
         return (key & (0xFFFFFFFF << ((round-1)%8)*32)) >> (((round-1)%8)*32)
     else:
         return getGostRoundKey(key, maxRounds-round + 1, maxRounds)
@@ -76,28 +98,6 @@ def rotateBy11Bits(input):
     last21Bits = input & 0x1FFFFF
     return (last21Bits << 11) + (firstElevenBits >> 21)
 
-def gostRoundFunction(input, key, round, maxRounds):
-    subkey = getGostRoundKey(key, round, maxRounds)
-    # print "Round Key: " + hex(subkey)
-    output = (input + subkey) % 0x100000000
-    # print "R + Round Key: " + hex(output)
-    output = applySBoxes(output)
-    # print "s-Box Application: " + hex(output)
-    output = rotateBy11Bits(output)
-    # print "Shift Left: " + hex(output)
-    return output
-
-def performGost(left, right, key, round, maxRounds):
-    # print "Round: %d"%round
-    # print "Left: %s"%hex(left)
-    # print "Right: %s"%hex(right)
-
-    newLeft = right
-    newRight = left ^ gostRoundFunction(right, key, round, maxRounds)
-    if round < maxRounds:
-        return performGost(newLeft, newRight, key, round+1, maxRounds)
-    else:
-        return (newLeft << 32) + newRight
 
 def bitDifference(a, b):
     return bin(a^b).count("1")
@@ -161,4 +161,4 @@ def keyAvalance():
 
 testEncrypt()
 plaintextAvalance()
-#keyAvalance()
+keyAvalance()
