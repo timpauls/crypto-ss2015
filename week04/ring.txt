@@ -1,0 +1,12 @@
+Conditions required of a ring:
+
+1) Closure under addition: CHECK
+2) Associativity of addition: CHECK
+3) Additive identity: CHECK (a is the identity element)
+4) Additive inverse: CHECK (a is the inverse element for a, b is the inverse element for b)
+5) Commutativity for addition: CHECK
+6) Closure under multiplication: CHECK
+7) Associativity of multiplication: CHECK
+8) Distributive laws: CHECK
+
+=> S is a ring.
