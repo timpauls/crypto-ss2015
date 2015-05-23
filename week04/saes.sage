@@ -100,80 +100,42 @@ def expandKey(key):
 ##################
 
 def saes_encrypt(plaintext, key):
-  # init
-  print "Plain:"
-  print pp(plaintext)
-  print ""
-
   keys = expandKey(key)
-  print "Keys:"
-  print pp(keys[0])
-  print pp(keys[1])
-  print pp(keys[2])
-  print ""
 
-  # round 0
-  print "Round 0"
+  # -- ROUND 0 --
   round0 = xor(plaintext, keys[0])
-  print "Result:"
-  print pp(round0)
-  print ""
-  print ""
 
-  # round 1
-  print "Round 1"
+
+  # -- ROUND 1 --
   sboxed = []
   for i in xrange(0, len(round0), 4):
     sboxed += sbox(round0[i:i+4])
-  print "SBoxed nibbles:"
-  print pp(sboxed)
-  print ""
-
+  
   # swap 2nd and 4th nibble
   shifted = sboxed[0:4] + sboxed[12:16] + sboxed[8:12] + sboxed[4:8]
-  print "Shift row:"
-  print pp(shifted)
-  print ""
-
+  
   #mix columns
   mixed = mix_col(shifted)
-  print "Mixed:"
-  print pp(mixed)
-  print ""
-
+  
   # add key
   round1 = xor(mixed, keys[1])
-  print "Result:"
-  print pp(round1)
-  print ""
-  print ""
+  
 
-  # round 2
-  print "Round 2"
+  # -- ROUND 2 --
   sboxed = []
   for i in xrange(0, len(round1), 4):
     sboxed += sbox(round1[i:i+4])
-  print "SBoxed nibbles:"
-  print pp(sboxed)
-  print ""
-
+  
   # swap 2nd and 4th nibble
   shifted = sboxed[0:4] + sboxed[12:16] + sboxed[8:12] + sboxed[4:8]
-  print "Shift row:"
-  print pp(shifted)
-  print ""
-
+  
   # add key
   round2 = xor(shifted, keys[2])
-  print "Result:"
-  print pp(round2)
-  print ""
-  print ""
-
+  
   return round2
 
 def saes_decrypt(ciphertext, key):
-    pass
+  pass
 ##################
 # YOUR CODE HERE #
 ##################
@@ -201,5 +163,4 @@ def test():
         assert(saes_decrypt(ciphertext=ciphertext, key=key)
                == plaintext)
 
-saes_encrypt(plaintext=string2blist('0110111101101011'), key=string2blist('1010011100111011'))
-#test()
+test()
