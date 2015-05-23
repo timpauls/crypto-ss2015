@@ -66,11 +66,13 @@ def inv_mix_col(d):
 
 # You probably want to define more utility functions
 
-def sbox(nibble):
+def sbox(nibble, inv=False):
   values =  [ '1001', '0100', '1010', '1011', '1101', '0001', '1000', '0101',
               '0110', '0010', '0000', '0011', '1100', '1110', '1111', '0111']
-  out = string2blist(values[int("".join(map(str, nibble)), 2)])
-  return out
+  if inv:
+    return int2blist(values.index("".join((map(str, nibble)))), 4)
+  else:
+    return string2blist(values[int("".join(map(str, nibble)), 2)])
 
 def rotNib(word):
   return word[4:] + word[:4]
@@ -94,10 +96,6 @@ def expandKey(key):
   keys[2] = w4 + w5
 
   return keys
-
-##################
-# YOUR CODE HERE #
-##################
 
 def saes_encrypt(plaintext, key):
   keys = expandKey(key)
@@ -135,10 +133,33 @@ def saes_encrypt(plaintext, key):
   return round2
 
 def saes_decrypt(ciphertext, key):
-  pass
-##################
-# YOUR CODE HERE #
-##################
+  keys = expandKey(key)
+
+  # -- reverse ROUND 2 --
+  round2 = xor(ciphertext, keys[2])
+
+  shifted = round2[0:4] + round2[12:16] + round2[8:12] + round2[4:8]
+
+  sboxed = []
+  for i in xrange(0, len(shifted), 4):
+    sboxed += sbox(shifted[i:i+4], inv=True)
+
+  # -- reverse ROUND 1 --
+  round1 = xor(sboxed, keys[1])
+
+  mixed = mix_col(round1, inv=True)
+
+  shifted = mixed[0:4] + mixed[12:16] + mixed[8:12] + mixed[4:8]
+
+  sboxed = []
+  for i in xrange(0, len(shifted), 4):
+    sboxed += sbox(shifted[i:i+4], inv=True)
+
+  # -- reverse ROUND 0 --
+  plainText = xor(sboxed, keys[0])
+
+  return plainText
+
 
 def test():
     for (plaintext, key, ciphertext) in [
