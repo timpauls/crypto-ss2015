@@ -1,0 +1,6 @@
+To show that the given matrix is the inverse of matrix \( \left( \begin{matrix} 1 & x^2\\ x^2 & 1 \end{matrix} \right) \) multiplying them must result in the identity matrix.
+\( \left( \begin{matrix} x^3 + 1 & x\\ x & x^3+1 \end{matrix} \right) \cdot \left( \begin{matrix} 1 & x^2\\ x^2 & 1 \end{matrix} \right) = \left( \begin{matrix} 2x^3 + 1 & x^5+x^2 + x\\ x^5+x^2+x & 2x^3+1 \end{matrix} \right) \)
+
+Take all coefficients modulo 2, all polynoms modulo \( x^4+x+1 \). Since \( (x^5+x^2+x) : (x^4+x+1)= x \) the rest is 0.
+
+Thus the resulting matrix is \( \left( \begin{matrix} 1 & 0\\ 0 & 1 \end{matrix} \right) \), which is the identity matrix.
