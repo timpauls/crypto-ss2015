@@ -1620,16 +1620,21 @@ cipherHexStr = str2hex(cipher_text)
 cipherHexBlocks = cipherHexStr.splitlines()
 xoredPlainHexBlocks = xorAllBlocks(cipherHexBlocks)
 
-# (P1 XOR P11) XOR (P1 XOR P21) should equal (P11 XOR P21)
-p1p11 = xorBlocks(cipherHexBlocks, 1, 11)
-p1p21 = xorBlocks(cipherHexBlocks, 1, 21)
-p11p21 = xorBlocks(cipherHexBlocks, 11, 21)
-
-assert(xor(hex2str(p1p11), hex2str(p1p21)) == hex2str(p11p21))
-# ... and it does!
-
 # So if I somehow get plain text block 1 I can calculate blocks 11, 21, 31, ...
 # I only need to crack 10 blocks to get the complete text.
+# Approach: try to find common words in each block. Take a word, create blocks that contain
+# the word in every possible position, e.g.:
+#
+# Word: "and"
+# Create blocks:
+# "and             "
+# " and            "
+# "  and           "
+# ....
+# "             and"
+#
+# XOR all of those blocks with the XORed plain text blocks. If the result contains readable text
+# one of the plain text blocks contained the word "and" at the position of the readable text.
 
 def createTestBlocks(word, blockSize=16):
 	testBlocks = []
@@ -1641,17 +1646,21 @@ def createTestBlocks(word, blockSize=16):
 
 	return testBlocks
 
-word = "and"
+word = " and "
 testBlocks = createTestBlocks(word)
 
-print "\033[93m" + "Testing using word: " + word
+COLOR_HIGHLIGHT = "\033[93m\033[4m"
+COLOR_END = "\033[0m"
+
+print "Testing using word: " + COLOR_HIGHLIGHT + word + COLOR_END
 for i, block in enumerate(xoredPlainHexBlocks[:10]):
 	blockString = hex2str(block)
 	print "\nTesting block %d (%s)"%(i, blockString)
 
 	for j, testBlock in enumerate(testBlocks):
 		#print "With testblock %d (%s):"%(j, testBlock)
-		print xor(blockString, testBlock)
+		xored = xor(blockString, testBlock)
+		print xored[:j] + COLOR_HIGHLIGHT + xored[j:j+len(word)] + COLOR_END + xored[j+len(word):]
 
 #print
 #print xor(hex2str(cipherHexBlocks[0]), hex2str(cipherHexBlocks[10]))
