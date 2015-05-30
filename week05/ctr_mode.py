@@ -1625,8 +1625,38 @@ p1p11 = xorBlocks(cipherHexBlocks, 1, 11)
 p1p21 = xorBlocks(cipherHexBlocks, 1, 21)
 p11p21 = xorBlocks(cipherHexBlocks, 11, 21)
 
-# assert(xor(hex2str(p1p11), hex2str(p1p21)) == hex2str(p11p21))
+assert(xor(hex2str(p1p11), hex2str(p1p21)) == hex2str(p11p21))
 # ... and it does!
+
+# So if I somehow get plain text block 1 I can calculate blocks 11, 21, 31, ...
+# I only need to crack 10 blocks to get the complete text.
+
+def createTestBlocks(word, blockSize=16):
+	testBlocks = []
+	for i in xrange(blockSize-len(word)+1):
+		testBlock = "".join(i * [' '])
+		testBlock += word
+		testBlock = testBlock.ljust(blockSize)
+		testBlocks.append(testBlock)
+
+	return testBlocks
+
+word = "and"
+testBlocks = createTestBlocks(word)
+
+print "\033[93m" + "Testing using word: " + word
+for i, block in enumerate(xoredPlainHexBlocks[:10]):
+	blockString = hex2str(block)
+	print "\nTesting block %d (%s)"%(i, blockString)
+
+	for j, testBlock in enumerate(testBlocks):
+		#print "With testblock %d (%s):"%(j, testBlock)
+		print xor(blockString, testBlock)
+
+#print
+#print xor(hex2str(cipherHexBlocks[0]), hex2str(cipherHexBlocks[10]))
+#print hex2str(xorBlocks(cipherHexBlocks, 0, 10))
+
 
 #xoredPlainHexStr = " ".join(xoredPlainHexBlocks)
 #print hex2str(xoredPlainHexStr)
