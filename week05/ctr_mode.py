@@ -1601,9 +1601,38 @@ def test():
 # YOUR CODE HERE #
 ##################
 
+# General idea: since the counter cycle is only 10 that means the bits XORed with the
+# 1st block of plain text to get the first block of cipher text are the same as the bits
+# XORed with the 11th block of plain text to get the 11th block of cipher text.
+# So XORing the 1st and 11th block of cipher text is equivalent to XORing the 1st and 11th
+# block of plain text.
+
+def xorBlocks(blocks, firstIndex, secondIndex):
+	return str2hex(xor(hex2str(blocks[firstIndex]), hex2str(blocks[secondIndex])))
+
+def xorAllBlocks(blocks, cycle=10):
+	xoredBlocks = []
+	for i in xrange(len(blocks)-cycle):
+		xoredBlocks.append(xorBlocks(blocks, i, i+cycle))
+	return xoredBlocks
+
+cipherHexStr = str2hex(cipher_text)
+cipherHexBlocks = cipherHexStr.splitlines()
+xoredPlainHexBlocks = xorAllBlocks(cipherHexBlocks)
+
+# (P1 XOR P11) XOR (P1 XOR P21) should equal (P11 XOR P21)
+p1p11 = xorBlocks(cipherHexBlocks, 1, 11)
+p1p21 = xorBlocks(cipherHexBlocks, 1, 21)
+p11p21 = xorBlocks(cipherHexBlocks, 11, 21)
+
+# assert(xor(hex2str(p1p11), hex2str(p1p21)) == hex2str(p11p21))
+# ... and it does!
+
+#xoredPlainHexStr = " ".join(xoredPlainHexBlocks)
+#print hex2str(xoredPlainHexStr)
+
 # This, of course, is _not_ the plaintext. It is your goal to retrieve
 # the plaintext!
 plain_text = "This is the plaintext."
 
-
-test()
+#test()
