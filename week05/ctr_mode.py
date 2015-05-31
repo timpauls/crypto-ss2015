@@ -1597,29 +1597,12 @@ def test():
     assert(hashlib.sha256(plain_text).hexdigest() ==
            '3e5bf7132cef13d7d1802fd2eb4e149e77904f1684debe9477d17ea3a141668d')
 
-##################
-# YOUR CODE HERE #
-##################
-
 # General idea: since the counter cycle is only 10 that means the bits XORed with the
 # 1st block of plain text to get the first block of cipher text are the same as the bits
 # XORed with the 11th block of plain text to get the 11th block of cipher text.
 # So XORing the 1st and 11th block of cipher text is equivalent to XORing the 1st and 11th
 # block of plain text.
-
-def xorBlocks(blocks, firstIndex, secondIndex):
-	return str2hex(xor(hex2str(blocks[firstIndex]), hex2str(blocks[secondIndex])))
-
-def xorAllBlocks(blocks, cycle=10):
-	xoredBlocks = []
-	for i in xrange(len(blocks)-cycle):
-		xoredBlocks.append(xorBlocks(blocks, i, i+cycle))
-	return xoredBlocks
-
-cipherHexStr = str2hex(cipher_text)
-cipherHexBlocks = cipherHexStr.splitlines()
-xoredPlainHexBlocks = xorAllBlocks(cipherHexBlocks)
-
+#
 # So if I somehow get plain text block 1 I can calculate blocks 11, 21, 31, ...
 # I only need to crack 10 blocks to get the complete text.
 # Approach: try to find common words in each block. Take a word, create blocks that contain
@@ -1635,6 +1618,21 @@ xoredPlainHexBlocks = xorAllBlocks(cipherHexBlocks)
 #
 # XOR all of those blocks with the XORed plain text blocks. If the result contains readable text
 # one of the plain text blocks contained the word "and" at the position of the readable text.
+# Wich block contained the text can be checked by XORing the test block with another
+# XORed plaintext block containing one of the previous plaintext blocks (e.g. testing first
+# against p0p10 and then against p0p20).
+
+COLOR_HIGHLIGHT = "\033[93m\033[4m"
+COLOR_END = "\033[0m"
+
+def xorBlocks(blocks, firstIndex, secondIndex):
+	return str2hex(xor(hex2str(blocks[firstIndex]), hex2str(blocks[secondIndex])))
+
+def xorBlocksWithIndex(blocks, index, cycle=10):
+	result = []
+	for i in xrange(index+cycle, len(blocks) - cycle, cycle):
+		result.append(xorBlocks(blocks, index, i))
+	return result
 
 def createTestBlocks(word, blockSize=16):
 	testBlocks = []
@@ -1646,29 +1644,79 @@ def createTestBlocks(word, blockSize=16):
 
 	return testBlocks
 
-word = " and "
-testBlocks = createTestBlocks(word)
+# 'A-Z', 'a-z', space, period, comma, exclamation mark, question mark
+legalChars = range(65, 91) + range(97, 122) + [32, 44, 46, 33, 63]
+def stringIsLegal(string):
+	isLegal = True
+	for letter in string:
+		ascii = ord(letter)
+		# ascii has to be A-Z or a-z or SPACE or . or , or ! or ?
+		if ascii not in legalChars:
+			isLegal = False
+			break;
 
-COLOR_HIGHLIGHT = "\033[93m\033[4m"
-COLOR_END = "\033[0m"
+	return isLegal
 
-print "Testing using word: " + COLOR_HIGHLIGHT + word + COLOR_END
-for i, block in enumerate(xoredPlainHexBlocks[:10]):
-	blockString = hex2str(block)
-	print "\nTesting block %d (%s)"%(i, blockString)
+def getCipherHexBlocks():
+	cipherHexStr = str2hex(cipher_text)
+	return cipherHexStr.splitlines()
 
-	for j, testBlock in enumerate(testBlocks):
-		#print "With testblock %d (%s):"%(j, testBlock)
-		xored = xor(blockString, testBlock)
-		print xored[:j] + COLOR_HIGHLIGHT + xored[j:j+len(word)] + COLOR_END + xored[j+len(word):]
+def guessing():
+	referenceBlock = 0 # create XORed plaintext blocks based on block 0
+	word = " and " # common word to search for. By adding spaces we get the benefit of decrypting 5 characters at a time, while sacrificing finding some occurrences at the start or end of a block.
+	testBlocks = createTestBlocks(word)
 
-#print
-#print xor(hex2str(cipherHexBlocks[0]), hex2str(cipherHexBlocks[10]))
-#print hex2str(xorBlocks(cipherHexBlocks, 0, 10))
+	cipherHexBlocks = getCipherHexBlocks()
+	plaintextBlocks = xorBlocksWithIndex(cipherHexBlocks, referenceBlock) # p0p10, p0p20, p0p30, etc.
 
+	print "Testing using word: " + COLOR_HIGHLIGHT + word + COLOR_END
+	print
+	for i, block in enumerate(plaintextBlocks):
+		blockString = hex2str(block)
+		matches = []
 
-#xoredPlainHexStr = " ".join(xoredPlainHexBlocks)
-#print hex2str(xoredPlainHexStr)
+		for j, testBlock in enumerate(testBlocks):
+			xored = xor(blockString, testBlock)
+			supposedPlaintext = xored[j:j+len(word)] # text at the same position as the test word in the test block. This is what needs to be legal plain text to confirm the test word.
+			if stringIsLegal(supposedPlaintext):
+				matches.append(xored[:j] + COLOR_HIGHLIGHT + supposedPlaintext + COLOR_END + xored[j+len(word):])
+
+		if len(matches) > 0:
+			tag = "p%04d XOR p%4d"%(referenceBlock, referenceBlock + (i+1)*10)
+			for string in matches:
+				print tag + " " + string
+
+# guessing()
+
+# - use common word " and " as test word. Several occurrences of "State" at the beginning of blocks -> Assume that block p0 starts with "State"
+# - use "State" as next test word. Lots of possible plain text at the start of blocks, e.g. "susta" in p10. Guess "sustain" or "sustained", use as next test word
+# - "sustained " reveals "Stately, p" in p0, use as next test word
+# - in p110: "llen oval ", assume the next word is "office". No luck :-(
+# - in p450: "uck Mullig", assume it's supposed to be "Mulligan" -> reveals "Stately, plu", and in other blocks "tately, plump". Assume p0 starts with "Stately, plump", use as next test word
+# - in p50 " shaking gurgl", assume it's "gurgling", use as test word
+# - complete block p0 is revealed "Stately, plumb B"
+# - Google auto complete suggests "Stately, plumb Buck", the beginning of Ulysses by James Joyce
+# - The first two sentences are: "Stately, plump Buck Mulligan came from the stairhead, bearing a bowl of lather on which a mirror and a razor lay crossed. A yellow dressinggown, ungirdled, was sustained gently behind him on the mild morning air.
+# - construct 10 blocks from it:
+
+firstBlocks = [
+	"Stately, plump B",
+	"uck Mulligan cam",
+	"e from the stair",
+	"head, bearing a ",
+	"bowl of lather o",
+	"n which a mirror",
+	" and a razor lay",
+	" crossed. A yell",
+	"ow dressinggown,",
+	" ungirdled, was "]
+
+def generateCompleteText(firstBlocks):
+	# use those 10 blocks to generate the complete text
+	cipherHexBlocks = getCipherHexBlocks()
+	for i, block in enumerate(firstBlocks):
+		xorBlocksWithIndex(cipherHexBlocks, i)
+		// TODO
 
 # This, of course, is _not_ the plaintext. It is your goal to retrieve
 # the plaintext!
