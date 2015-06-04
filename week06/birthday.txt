@@ -1,0 +1,4 @@
+1. Preimage resistance: given a birthday of a person, it is impossible to find that person
+2. Second preimage resistance: given a person, it is impossible to find another person with the same birthday
+3. Collision resistance: it is impossible to find two people that have the same birthday
+4. Birthday paradox: the birthday paradox is about finding the probability of any two people in a group having the same birthday. This probability is much higher than intuitivley thought because no specific date or people are given. Transferred to hashes this means it is much easier to find any two messages that have the same hash value, than to find a message matching the hash value of a specific other message.
