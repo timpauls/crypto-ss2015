@@ -1,0 +1,1 @@
+Using h(K ⊕ a || h(K ⊕ b||M)) has the added advantage that it can be calculated for parts of the message without knowing it completely or knowing its length.
