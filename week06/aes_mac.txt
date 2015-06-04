@@ -1,0 +1,2 @@
+The probability of finding two messages that lead to the same XORed result, and thus to the same AES encrypted result and the same MAC is really high.
+For example, two messages containing the same blocks, only in a different order would lead to the same MAC.
