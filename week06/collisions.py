@@ -7,6 +7,9 @@
 import random
 import Crypto.Hash.SHA256
 import pdb
+import itertools
+import string
+import datetime
 
 blockSize = 64 # 64 * 8 = 512 bit
 
@@ -40,10 +43,18 @@ def preimage(digest):
     """Find preimage for digest.
 
     Function test() shows how this function is called."""
-##################
-# YOUR CODE HERE #
-##################
-    return(msg, hash)
+
+    sha = Crypto.Hash.SHA256.new()
+
+    for length in xrange(10):
+        for s in itertools.imap(''.join, itertools.product(string.ascii_letters + string.digits + string.punctuation + string.whitespace, repeat=length)):
+            sha.update(s)
+            digest = sha.digest()
+            dig = digest[:3]
+            if dig == '\xFF\xFF\xFF':
+                return (s, digest)
+
+    return(None, None)
 
 # In this exercise, we only use the first five bytes of SHA-256 hashs,
 # i.e. when calculating a hash, we cut it after the fifth byte.
@@ -55,10 +66,39 @@ def collision(digestLength):
     """Find collision for digest.
 
     Function test() shows how this function is called."""
-##################
-# YOUR CODE HERE #
-##################
-    return(msg0, hash0, msg1, hash1)
+
+    sha = Crypto.Hash.SHA256.new()
+
+    log("Starting collision test...")
+
+    startLetterLeft = ""
+    startLetterRight = ""
+    for length in xrange(3, 10):
+        for s1 in itertools.imap(''.join, itertools.product(string.ascii_letters + string.digits + string.punctuation + string.whitespace, repeat=length)):
+            if s1[:1] != startLetterLeft:
+                log("Testing left blocks of length %d starting with %s"%(length, s1[:1]))
+            startLetterLeft = s1[:1]
+
+            for s2 in itertools.imap(''.join, itertools.product(string.ascii_letters + string.digits + string.punctuation + string.whitespace, repeat=length)):
+                if s1 != s2:
+                    sha.update(s1)
+                    digest1 = sha.digest()
+                    dig1 = digest1[:digestLength]
+
+                    sha.update(s2)
+                    digest2 = sha.digest()
+                    dig2 = digest2[:digestLength]
+
+                    if dig1 == dig2:
+                        log("Found collision!!")
+                        log("S1: %s; Digest1: %s"%(s1, digest1))
+                        log("S2: %s; Digest2: %s"%(s2, digest2))
+                        return (s1, digest1, s2, digest2)
+
+    return(None, None, None, None)
+
+def log(string):
+    print "[%s] %s"%(datetime.datetime.now(), string)
 
 def test():
     print('********')
