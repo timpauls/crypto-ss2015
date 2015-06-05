@@ -19,9 +19,15 @@ from datetime import datetime
 FILENAME='random.dat'
 N=2500
 
-URL = "http://heise.de.feedsportal.com/c/35207/f/653902/index.rss"
-
-def trng_test(bytes):
+# Using heise.de newsfeed as entropy source.
+# This RNG fetches the heise.de newsfeed, selects a headline based on the current time (seconds),
+# selects a character from that headline based on the current time (microseconds) and appends
+# that character to the result.
+# Since every byte triggers a new network call, added randomness is generated from the time
+# that call takes to complete.
+# Also, this is slow as fuck.
+def trng_heise_news(bytes):
+	URL = "http://heise.de.feedsportal.com/c/35207/f/653902/index.rss"
 	result = []
 	for n in xrange(bytes):
 		# load newsfeed
@@ -40,11 +46,11 @@ def trng_test(bytes):
 
 		# map current microsecond to character in headline
 		char = headline[int(len(headline) / 1000000.0 * now.microsecond)]
-		print char
 		result.append(char)
 		print "".join(result)
 
 	print "".join(result)
+	return result
 
 
 
@@ -59,5 +65,5 @@ def trng(filename, n):
     rnFile.close()
 
 if __name__ == "__main__":
-	trng_test(32)
+	trng_heise_news(32)
     #trng(filename=FILENAME, n=N)
