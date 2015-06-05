@@ -44,14 +44,16 @@ def preimage(digest):
 
     Function test() shows how this function is called."""
 
-    sha = Crypto.Hash.SHA256.new()
+    log("Starting preimage...")
 
     for length in xrange(10):
         for s in itertools.imap(''.join, itertools.product(string.ascii_letters + string.digits + string.punctuation + string.whitespace, repeat=length)):
+            sha = Crypto.Hash.SHA256.new()
             sha.update(s)
-            digest = sha.digest()
-            dig = digest[:3]
-            if dig == '\xFF\xFF\xFF':
+            dig = sha.digest()[:3]
+            if dig == digest:
+                log("Found preimage!")
+                log("Message: %s; Digest: %s"%(s, digest))
                 return (s, digest)
 
     return(None, None)
@@ -67,24 +69,20 @@ def collision(digestLength):
 
     Function test() shows how this function is called."""
 
-    sha = Crypto.Hash.SHA256.new()
-
     log("Starting collision test...")
 
-    startLetterLeft = ""
-    startLetterRight = ""
     for length in xrange(3, 10):
         for s1 in itertools.imap(''.join, itertools.product(string.ascii_letters + string.digits + string.punctuation + string.whitespace, repeat=length)):
-            if s1[:1] != startLetterLeft:
-                log("Testing left blocks of length %d starting with %s"%(length, s1[:1]))
-            startLetterLeft = s1[:1]
+            log("Testing left block %s"%(s1))
 
             for s2 in itertools.imap(''.join, itertools.product(string.ascii_letters + string.digits + string.punctuation + string.whitespace, repeat=length)):
                 if s1 != s2:
+                    sha = Crypto.Hash.SHA256.new()
                     sha.update(s1)
                     digest1 = sha.digest()
                     dig1 = digest1[:digestLength]
 
+                    sha = Crypto.Hash.SHA256.new()
                     sha.update(s2)
                     digest2 = sha.digest()
                     dig2 = digest2[:digestLength]
@@ -101,14 +99,14 @@ def log(string):
     print "[%s] %s"%(datetime.datetime.now(), string)
 
 def test():
-    print('********')
-    print('Preimage')
-    print('********\n')
-    (msg, digest) = preimage('\xFF\xFF\xFF')
-    print('Message:')
-    print(prettyPrintHexList(list(msg)))
-    print('Digest:')
-    print(prettyPrintHexList(list(digest)))
+    #print('********')
+    #print('Preimage')
+    #print('********\n')
+    #(msg, digest) = preimage('\xFF\xFF\xFF')
+    #print('Message:')
+    #print(prettyPrintHexList(list(msg)))
+    #print('Digest:')
+    #print(prettyPrintHexList(list(digest)))
 
     print('*********')
     print('Collision')
