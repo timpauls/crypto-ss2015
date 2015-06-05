@@ -99,14 +99,14 @@ def log(string):
     print "[%s] %s"%(datetime.datetime.now(), string)
 
 def test():
-    #print('********')
-    #print('Preimage')
-    #print('********\n')
-    #(msg, digest) = preimage('\xFF\xFF\xFF')
-    #print('Message:')
-    #print(prettyPrintHexList(list(msg)))
-    #print('Digest:')
-    #print(prettyPrintHexList(list(digest)))
+    print('********')
+    print('Preimage')
+    print('********\n')
+    (msg, digest) = preimage('\xFF\xFF\xFF')
+    print('Message:')
+    print(prettyPrintHexList(list(msg)))
+    print('Digest:')
+    print(prettyPrintHexList(list(digest)))
 
     print('*********')
     print('Collision')
