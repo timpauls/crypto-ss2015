@@ -71,12 +71,13 @@ def collision(digestLength):
 
     log("Starting collision test...")
 
-    for length in xrange(3, 10):
-        for s1 in itertools.imap(''.join, itertools.product(string.ascii_letters + string.digits + string.punctuation + string.whitespace, repeat=length)):
+    alphabet = string.ascii_lowercase + string.digits
+    for length in xrange(4, 10):
+        for i, s1 in enumerate(itertools.imap(''.join, itertools.product(alphabet, repeat=length))):
             log("Testing left block %s"%(s1))
 
-            for s2 in itertools.imap(''.join, itertools.product(string.ascii_letters + string.digits + string.punctuation + string.whitespace, repeat=length)):
-                if s1 != s2:
+            for j, s2 in enumerate(itertools.imap(''.join, itertools.product(alphabet, repeat=length))):
+                if s1 != s2 and j > i:
                     sha = Crypto.Hash.SHA256.new()
                     sha.update(s1)
                     digest1 = sha.digest()
