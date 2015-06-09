@@ -29,7 +29,7 @@ N=2500
 def trng_heise_news(bytes):
 	URL = "http://heise.de.feedsportal.com/c/35207/f/653902/index.rss"
 	result = []
-	for n in xrange(bytes):
+	while len(result) < bytes:
 		# load newsfeed
 		urlContent = urllib2.urlopen(URL).read()
 		root = ET.fromstring(urlContent)
@@ -46,9 +46,13 @@ def trng_heise_news(bytes):
 
 		# map current microsecond to character in headline
 		char = headline[int(len(headline) / 1000000.0 * now.microsecond)]
-		result.append(char)
+
+		# char has to be in ascii
+		if all(ord(c) < 128 for c in char):
+			result.append(char)
+
 		import sys
-		sys.stdout.write("Progress: %2.2f%%\r"%(100.0*n/bytes))
+		sys.stdout.write("Progress: %2.2f%%\r"%(100.0*len(result)/bytes))
 		sys.stdout.flush()
 
 	return result
