@@ -47,23 +47,23 @@ def trng_heise_news(bytes):
 		# map current microsecond to character in headline
 		char = headline[int(len(headline) / 1000000.0 * now.microsecond)]
 		result.append(char)
-		print "".join(result)
+		import sys
+		sys.stdout.write("Progress: %2.2f%%\r"%(100.0*n/bytes))
+		sys.stdout.flush()
 
-	print "".join(result)
 	return result
 
 
 
 def trng(filename, n):
     rn = []
-##################
-# YOUR CODE HERE #
-##################
+
+    rn = trng_heise_news(n)
+
     rnFile = open(filename, 'wb')
     for i in rn:
         rnFile.write(i)
     rnFile.close()
 
 if __name__ == "__main__":
-	trng_heise_news(32)
-    #trng(filename=FILENAME, n=N)
+    trng(filename=FILENAME, n=N)
