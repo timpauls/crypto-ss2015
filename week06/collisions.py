@@ -10,6 +10,9 @@ import pdb
 import itertools
 import string
 import datetime
+import os
+
+DEBUG = False
 
 blockSize = 64 # 64 * 8 = 512 bit
 
@@ -50,11 +53,12 @@ def preimage(digest):
         for s in itertools.imap(''.join, itertools.product(string.ascii_letters + string.digits + string.punctuation + string.whitespace, repeat=length)):
             sha = Crypto.Hash.SHA256.new()
             sha.update(s)
-            dig = sha.digest()[:3]
+            mydigest = sha.digest()
+            dig = mydigest[:3]
             if dig == digest:
                 log("Found preimage!")
-                log("Message: %s; Digest: %s"%(s, digest))
-                return (s, digest)
+                log("Message: %s; Digest: %s"%(s, mydigest))
+                return (s, mydigest)
 
     return(None, None)
 
@@ -71,33 +75,32 @@ def collision(digestLength):
 
     log("Starting collision test...")
 
-    alphabet = string.ascii_lowercase + string.digits
-    for length in xrange(4, 10):
-        for i, s1 in enumerate(itertools.imap(''.join, itertools.product(alphabet, repeat=length))):
-            log("Testing left block %s"%(s1))
+    hashedWords = {}
+    length = 32
 
-            for j, s2 in enumerate(itertools.imap(''.join, itertools.product(alphabet, repeat=length))):
-                if s1 != s2 and j > i:
-                    sha = Crypto.Hash.SHA256.new()
-                    sha.update(s1)
-                    digest1 = sha.digest()
-                    dig1 = digest1[:digestLength]
+    while True:
+        randomString = os.urandom(length)
+        sha = Crypto.Hash.SHA256.new()
+        sha.update(randomString)
+        digest = sha.digest()
+        dig = digest[:digestLength]
 
-                    sha = Crypto.Hash.SHA256.new()
-                    sha.update(s2)
-                    digest2 = sha.digest()
-                    dig2 = digest2[:digestLength]
+        log("%s - %s"%(prettyPrintHexList(list(randomString)), prettyPrintHexList(list(digest))))
 
-                    if dig1 == dig2:
-                        log("Found collision!!")
-                        log("S1: %s; Digest1: %s"%(s1, digest1))
-                        log("S2: %s; Digest2: %s"%(s2, digest2))
-                        return (s1, digest1, s2, digest2)
+        if dig not in hashedWords:
+            hashedWords[dig] = (randomString, digest)
+            log("Inserted. New size: %d"%(len(hashedWords)))
+        else:
+            log("Found match!")
+            log("%s - %s"%(randomString, digest))
+            log("%s - %s"%(hashedWords[dig][0], hashedWords[dig][1]))
+            return (randomString, digest, hashedWords[dig][0], hashedWords[dig][1])
 
     return(None, None, None, None)
 
 def log(string):
-    print "[%s] %s"%(datetime.datetime.now(), string)
+    if DEBUG:
+        print "[%s] %s"%(datetime.datetime.now(), string)
 
 def test():
     print('********')
