@@ -1,0 +1,3 @@
+#!/bin/bash
+nohup stdbuf -oL ./collisions.py > log.txt 2> log.err < /dev/null &
+
