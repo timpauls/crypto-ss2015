@@ -57,12 +57,43 @@ def trng_heise_news(bytes):
 
 	return result
 
+def trng_mouse_motion(bytes):
+	from Xlib import display
+	print "Please move your mouse..."
+
+	result = []
+
+	data = display.Display().screen().root.query_pointer()._data
+
+	lastX = data["root_x"]
+	lastY = data["root_y"]
+	while len(result) < bytes:
+		data = display.Display().screen().root.query_pointer()._data
+
+		x = data["root_x"]
+		y = data["root_y"]
+
+		if x < lastX:
+			result.append(0)
+		if x > lastX:
+			result.append(1)
+		if y < lastY:
+			result.append(2)
+		if y > lastY:
+			result.append(3)
+
+		lastX = x
+		lastY = y
+
+	print "Enough entropy collected."
+	return result
+
 
 
 def trng(filename, n):
     rn = []
 
-    rn = trng_heise_news(n)
+    rn = trng_mouse_motion(n)
 
     rnFile = open(filename, 'wb')
     for i in rn:
