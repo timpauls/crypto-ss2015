@@ -7,7 +7,7 @@
 # PUB 140-2 - SECURITY REQUIREMENTS FOR CRYPTOGRAPHIC MODULES". The
 # document is available on the handout server.
 
-FILENAME='random.dat'
+FILENAME='heise_random.dat'
 
 def readRandomBits(filename):
     """Read file and return it as list of bits."""
@@ -41,10 +41,8 @@ def monobitTest(randomBits):
     # quantity by x.
     #
     # The test is passed if 9725 < x < 10275
-    pass
-##################
-# YOUR CODE HERE #
-##################
+    x = randomBits.count(1)
+    return 9725 < x < 10275
     
 def pokerTest(randomBits):
     """FIPS 140-2 poker test"""
@@ -64,10 +62,39 @@ def pokerTest(randomBits):
     # The test is passed if 2.16 < x < 46.17
     #
     # See fips_140_2.pdf, page 39-40
-    pass
-##################
-# YOUR CODE HERE #
-##################
+    f = [0]*16
+    for i in xrange(0, len(randomBits), 4):
+        chunk = randomBits[i:i+4]
+        f[bin2int(chunk)] += 1
+
+    for i in xrange(16):
+        fsum = f[i]**2
+
+    x = (16/5000.0) * fsum - 5000
+
+    return 2.16 < x < 46.17
+
+def countRuns(list, length, value, orLonger=False):
+    runCount = 0
+    lengthCount = 0
+    for element in list:
+        if element == value:
+            lengthCount += 1
+        else:
+            if orLonger:
+                if lengthCount >= length:
+                    runCount += 1
+            else:
+                if lengthCount == length:
+                    runCount += 1
+            
+            lengthCount = 0
+
+    if lengthCount == length:
+        runCount += 1
+
+    return runCount
+
     
 def runsTest(randomBits):
     """FIPS 140-2 runs test"""
@@ -94,10 +121,17 @@ def runsTest(randomBits):
     # 6+           111 -  201
     #
     # See fips_140_2.pdf, page 40
-    pass
-##################
-# YOUR CODE HERE #
-##################
+
+    minCounts = [2343, 1135, 542, 251, 111, 111]
+    maxCounts = [2657, 1365, 708, 373, 201, 201]
+
+    passed = True
+    for i in xrange(5):
+        passed = passed and (minCounts[i] < countRuns(randomBits, i+1, 0) < maxCounts[i]) and (minCounts[i] < countRuns(randomBits, i+1, 1) < maxCounts[i])
+
+    passed = passed and (minCounts[i] < countRuns(randomBits, 6, 0, orLonger=True) < maxCounts[i]) and (minCounts[i] < countRuns(randomBits, 6, 1, orLonger=True) < maxCounts[i])
+
+    return passed
     
 def longRunsTest(randomBits):
     """FIPS 140-2 long runs test"""
@@ -106,12 +140,13 @@ def longRunsTest(randomBits):
     # passed if there are no long runs.
     #
     # See fips_140_2.pdf, page 40
-    pass
-##################
-# YOUR CODE HERE #
-##################
+    return 0 == countRuns(randomBits, 26, 0, orLonger=True) == countRuns(randomBits, 26, 1, orLonger=True)
     
 
 if __name__ == "__main__":
     randomBits = readRandomBits(filename=FILENAME)
     testRandomNumbers(randomBits=randomBits)
+
+    #l = [1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0]
+    #print countRuns(l, 3, 1)
+    #print countRuns(l, 4, 1, orLonger=True)
