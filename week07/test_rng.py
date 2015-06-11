@@ -7,7 +7,7 @@
 # PUB 140-2 - SECURITY REQUIREMENTS FOR CRYPTOGRAPHIC MODULES". The
 # document is available on the handout server.
 
-FILENAME='heise_random.dat'
+FILENAME='random_org_random.dat'
 
 def readRandomBits(filename):
     """Read file and return it as list of bits."""
@@ -67,10 +67,7 @@ def pokerTest(randomBits):
         chunk = randomBits[i:i+4]
         f[bin2int(chunk)] += 1
 
-    for i in xrange(16):
-        fsum = f[i]**2
-
-    x = (16/5000.0) * fsum - 5000
+    x = (16/5000.0) * sum(map(lambda x: x**2, f)) - 5000
 
     return 2.16 < x < 46.17
 
