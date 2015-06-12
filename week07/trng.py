@@ -74,14 +74,22 @@ def trng_mouse_motion(bytes):
 		x = data["root_x"]
 		y = data["root_y"]
 
-		if x < lastX:
-			byte.append("00")
-		if x > lastX:
-			byte.append("01")
-		if y < lastY:
-			byte.append("10")
-		if y > lastY:
-			byte.append("11")
+		from random import shuffle
+		rand = range(4)
+		shuffle(rand)
+		for i in rand:
+			if i == 0:
+				if x < lastX:
+					byte.append("00")
+			elif i == 1:
+				if x > lastX:
+					byte.append("01")
+			elif i == 2:
+				if y < lastY:
+					byte.append("10")
+			elif i == 3:
+				if y > lastY:
+					byte.append("11")
 
 		if len(byte) >= 4:
 			result.append(chr(int("".join(byte[:4]), 2)))
