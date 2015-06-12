@@ -15,6 +15,7 @@
 import urllib2
 import xml.etree.ElementTree as ET
 from datetime import datetime
+import sys
 
 FILENAME='random.dat'
 N=2500
@@ -51,7 +52,6 @@ def trng_heise_news(bytes):
 		if all(ord(c) < 128 for c in char):
 			result.append(char)
 
-		import sys
 		sys.stdout.write("Progress: %2.2f%%\r"%(100.0*len(result)/bytes))
 		sys.stdout.flush()
 
@@ -62,6 +62,7 @@ def trng_mouse_motion(bytes):
 	print "Please move your mouse..."
 
 	result = []
+	byte = []
 
 	data = display.Display().screen().root.query_pointer()._data
 
@@ -74,13 +75,20 @@ def trng_mouse_motion(bytes):
 		y = data["root_y"]
 
 		if x < lastX:
-			result.append(0)
+			byte.append("00")
 		if x > lastX:
-			result.append(1)
+			byte.append("01")
 		if y < lastY:
-			result.append(2)
+			byte.append("10")
 		if y > lastY:
-			result.append(3)
+			byte.append("11")
+
+		if len(byte) >= 4:
+			result.append(chr(int("".join(byte[:4]), 2)))
+			byte = []
+
+		sys.stdout.write("Progress: %2.2f%%\r"%(100.0*len(result)/bytes))
+		sys.stdout.flush()
 
 		lastX = x
 		lastY = y

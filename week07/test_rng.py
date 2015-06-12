@@ -7,7 +7,7 @@
 # PUB 140-2 - SECURITY REQUIREMENTS FOR CRYPTOGRAPHIC MODULES". The
 # document is available on the handout server.
 
-FILENAME='random_org_random.dat'
+FILENAME='mouse_random.dat'
 
 def readRandomBits(filename):
     """Read file and return it as list of bits."""
