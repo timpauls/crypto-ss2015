@@ -15,6 +15,7 @@
 import urllib2
 import xml.etree.ElementTree as ET
 from datetime import datetime
+from random import shuffle, random
 import sys
 
 FILENAME='random.dat'
@@ -26,7 +27,11 @@ N=2500
 # that character to the result.
 # Since every byte triggers a new network call, added randomness is generated from the time
 # that call takes to complete.
-# Also, this is slow as fuck.
+#
+# Monobit:	X
+# Poker:	X
+# Runs:		X
+# Longruns:	X
 def trng_heise_news(bytes):
 	URL = "http://heise.de.feedsportal.com/c/35207/f/653902/index.rss"
 	result = []
@@ -57,6 +62,15 @@ def trng_heise_news(bytes):
 
 	return result
 
+# Using mouse motion as entropy source.
+# This RNG checks what direction the mouse was moved since the last loop,
+# encodes that direction as a 2 byte value and a appends four of those as
+# a byte to the result.
+#
+# Monobit:	check
+# Poker:	X
+# Runs:		X
+# Longruns:	X
 def trng_mouse_motion(bytes):
 	from Xlib import display
 	print "Please move your mouse..."
@@ -68,13 +82,16 @@ def trng_mouse_motion(bytes):
 
 	lastX = data["root_x"]
 	lastY = data["root_y"]
+
 	while len(result) < bytes:
 		data = display.Display().screen().root.query_pointer()._data
 
 		x = data["root_x"]
 		y = data["root_y"]
 
-		from random import shuffle
+		#deltaX = (x - lastX) % 256
+		#deltaY = (y - lastY) % 256
+
 		rand = range(4)
 		shuffle(rand)
 		for i in rand:
@@ -94,6 +111,7 @@ def trng_mouse_motion(bytes):
 		if len(byte) >= 4:
 			result.append(chr(int("".join(byte[:4]), 2)))
 			byte = []
+
 
 		sys.stdout.write("Progress: %2.2f%%\r"%(100.0*len(result)/bytes))
 		sys.stdout.flush()

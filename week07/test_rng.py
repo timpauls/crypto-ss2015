@@ -7,7 +7,7 @@
 # PUB 140-2 - SECURITY REQUIREMENTS FOR CRYPTOGRAPHIC MODULES". The
 # document is available on the handout server.
 
-FILENAME='mouse_random.dat'
+FILENAME='random.dat'
 
 def readRandomBits(filename):
     """Read file and return it as list of bits."""
@@ -142,6 +142,7 @@ def longRunsTest(randomBits):
 
 if __name__ == "__main__":
     randomBits = readRandomBits(filename=FILENAME)
+    #print "".join(map(lambda x : str(x), randomBits))
     testRandomNumbers(randomBits=randomBits)
 
     #l = [1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0]
