@@ -122,12 +122,24 @@ def trng_mouse_motion(bytes):
 	print "Enough entropy collected."
 	return result
 
+# Using a live stream of a supposed russian military radio signal as entropy source.
+# More  info on the signal: https://en.wikipedia.org/wiki/UVB-76
+# Since the live stream always starts with OGG headers, skip some bytes.
+def trng_buzzer(bytes):
+	URL = "http://stream.priyom.org:8000/buzzer.ogg"
+	connection = urllib2.urlopen(URL)
+	#skip some stuff (hopefully ogg headers)
+	connection.read(2000 + int(random() * 10000))
+	urlContent = connection.read(2500)
+	result = list(urlContent)
+	shuffle(result)
+	return result
 
 
 def trng(filename, n):
     rn = []
 
-    rn = trng_mouse_motion(n)
+    rn = trng_buzzer(n)
 
     rnFile = open(filename, 'wb')
     for i in rn:
