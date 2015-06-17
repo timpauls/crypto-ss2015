@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python
 
 """True Random Number Generator"""
@@ -124,7 +125,19 @@ def trng_mouse_motion(bytes):
 
 # Using a live stream of a supposed russian military radio signal as entropy source.
 # More  info on the signal: https://en.wikipedia.org/wiki/UVB-76
-# Since the live stream always starts with OGG headers, skip some bytes.
+# Since the live stream always starts with OGG headers, skip some bytes. Shuffle the read
+# bytes to try to prevent the poker test from failing.
+#
+# Monobit:	check
+# Poker:	check
+# Runs:		check
+# Longruns:	check
+#
+# Unfortunately, this is not really reliable. Also I suppose when it works it would work
+# just as well with any other ogg file, as currently only the compressed bytes are used.
+# Originally I had planned to decode the audio stream and use the actual raw audio data
+# (which contains lots of static noise) as entropy, however I did not manage to get that
+# working in time for the assignment.
 def trng_buzzer(bytes):
 	URL = "http://stream.priyom.org:8000/buzzer.ogg"
 	connection = urllib2.urlopen(URL)

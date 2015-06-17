@@ -142,9 +142,5 @@ def longRunsTest(randomBits):
 
 if __name__ == "__main__":
     randomBits = readRandomBits(filename=FILENAME)
-    #print "".join(map(lambda x : str(x), randomBits))
     testRandomNumbers(randomBits=randomBits)
-
-    #l = [1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0]
-    #print countRuns(l, 3, 1)
-    #print countRuns(l, 4, 1, orLonger=True)
+    #print "".join(map(lambda x : str(x), randomBits))
