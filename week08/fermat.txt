@@ -1,0 +1,8 @@
+Fermats theorem: a^P = a (mod P), for integer a, prime P
+
+x^61 congruent to 7 mod 31
+
+Let a = 7, P = 31
+
+x^61 congruent to 7^31
+x = (7^31)^(1/61) = 2.688...
