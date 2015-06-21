@@ -44,10 +44,7 @@ def remainder2int(chineseRemainder):
 
 def remainderAdd(a, b, M):
     """Calculate (a+b) % M using the Chinese Remainder Theorem."""
-    pass
-##################
-# YOUR CODE HERE #
-##################
+    return remainder2int(int2remainder(a+b, M))
 
 def testRepresentation():
     # Lady
@@ -66,8 +63,4 @@ def testAdd():
 
 if __name__ == "__main__":
     testRepresentation()
-    #testAdd()
-    #product = 72
-    #pair = (4, 5)
-    #i = var('i')
-    #print product * int(solve_mod([i*product==pair[0]], pair[1])[0][0])
+    testAdd()
