@@ -21,10 +21,11 @@ def int2remainder(i, M):
     """Convert an integer number to a list of pairs (residual, modulus).
 
     M shall be the product of the moduli, i.e. M=m_1;\ldots;m_n."""
-    pass
-##################
-# YOUR CODE HERE #
-##################
+    result = []
+    for base, exponent in factor(M):
+        result.append((i % base**exponent, base**exponent))
+
+    return result
 
 def remainder2int(chineseRemainder):
     """Convert a list of pairs (residual, modulus) to an integer."""
