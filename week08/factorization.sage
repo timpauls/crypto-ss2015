@@ -15,9 +15,14 @@ def generateN(b):
     # digits, because its binary representation is 10001.
     #
     # Hint: Use Sage function random_prime to generate random primes.
-##################
-# YOUR CODE HERE #
-##################
+    n = 0
+
+    while len(str(bin(n))[2:]) != b:
+        p = random_prime((2**(b/2))-1, proof=True)
+        pBitLength = len(str(bin(p))[2:])
+        q = random_prime((2**(b-pBitLength))-1, proof=True)
+        n = p*q
+
     return(n)
    
 
@@ -28,10 +33,11 @@ def timeToFactor(n):
     #
     # Hint: Use Sage function factor() for the actual factorization.
     # Use Python function time.clock() to get the time in seconds.
-    pass
-##################
-# YOUR CODE HERE #
-##################
+    start = time.clock()
+    factor(n)
+    end = time.clock()
+    return end-start
+
 
 
 def measureTime():
