@@ -1,0 +1,22 @@
+Alice and Bob exchange the modulus and generator:
+modulus 17
+generator 5
+
+Alice chooses her secret:
+	xA = 4
+Alice calculates her public key:
+	yA = 5^4 mod 17 = 13
+
+Bob chooses his secret:
+	xB = 13
+Bob calculates his public key:
+	yB = 5^13 mod 17 = 3
+
+Alice and Bob exchange their respective public keys.
+
+Alice calculates the shared key:
+	K = yB^xA mod 17 = 13
+Bob calculates the shared key:
+	K = yA^xB mod 17 = 13
+
+Further communication is encrypted with the shared key (in this case 13).
