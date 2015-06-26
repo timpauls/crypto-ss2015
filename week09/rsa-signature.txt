@@ -1,0 +1,8 @@
+Alices public key (n; e) = (221; 7)
+Message: 45
+Signature: 21
+
+Raise signature to power of e (mod n) and compare to message:
+21^7 mod 221 = 200 != 45
+
+=> Alice did not sign the message!
