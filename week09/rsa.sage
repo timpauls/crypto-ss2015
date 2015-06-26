@@ -99,9 +99,18 @@ def assignment4():
     , 0x96B949FECA5253588A2ED8A11B2AFE6C26589E69C1AE0325B238F9AFE016D39A1333B1DCAC412194A8F22F78B71A0EE3897BB8CC3277E76CC7FA50AFC2185FFC4E02AC09F0908ED7D0804606BE9D4C8A8EEC752A0619F2538B52258A56F91AA4441D26874C5DCBAD63349F51813544B80F38A6636287B4DB5094D96F218C17C5
     , 0x1059D85E2A9E7B3D858A4C75362113D0EE22525C9C1B440244CB858D736E953DE767A25916B9DFABE6DE4F7EEB07377E0C3835B93642F728B65AB9DEBE7A1239FDBD9D72E13C392C9E1006EC258355B71115833E2C3C546B81F38900EAF678A92E24D21663B5051DD1D41C7BE0B14242272CADEEC519781F0F2ECFE879FB51D0
     ]
-##################
-# YOUR CODE HERE #
-##################
+
+    plaintext = [0] * len(ciphertext)
+    import string
+    for char in string.printable:
+        cipher = pow(ord(char), e, n)
+
+        for i, j in enumerate(ciphertext):
+            if j == cipher:
+                plaintext[i] = char
+
+    plaintext = "".join(plaintext)
+
     # Check if your result is correct
     assert(hashlib.sha256(repr(plaintext)).hexdigest() ==
            '786a19c83d21e7135e309b6151c1edde7db0d82348c99adb75d54d5d530cc13b')
@@ -110,7 +119,7 @@ def test():
     assignment1()
     assignment2()
     assignment3()
-    #assignment4()
+    assignment4()
 
 if __name__ == "__main__":
     test()
