@@ -1,0 +1,4 @@
+Since Alice transmits the Message M and the random number k to Bob, that data can be assumed to be known to an attacker.
+The attacker also knows Alice's public key YA.
+
+Upon intercepting the message to Bob the attacker could make arbitrary changes to that message and then calculate a new signature S = M - k * YA wich is equal to how Alice calculates her signature (S = M - k * XA * G).
