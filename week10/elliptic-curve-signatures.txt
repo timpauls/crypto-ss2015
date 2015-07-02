@@ -1,0 +1,13 @@
+Alice defines:
+YA = XA * G
+S = M - k * XA * G
+
+Bob verifies:
+M = S + k * YA
+insert S into the equation:
+M = (M - k * XA * G) + k * YA
+insert YA into the equation:
+M = (M - k * XA * G) + k * XA * G
+M = M
+
+If the signature S is valid, the equation is correct.
